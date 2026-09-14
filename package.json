@@ -1,0 +1,32 @@
+{
+  "name": "xlsnoob",
+  "version": "1.0.0",
+  "description": "Excel task pane add-in",
+  "scripts": {
+    "build": "webpack --mode production",
+    "test": "tsc -p tests/tsconfig.json && node --test .test-dist/tests/**/*.test.js",
+    "dev-server": "webpack serve --mode development",
+    "prepare-dev-manifest": "node scripts/create-dev-manifest.js",
+    "prestart": "npm run prepare-dev-manifest",
+    "start": "office-addin-debugging start .dev/manifest.xml desktop --app excel",
+    "prestop": "npm run prepare-dev-manifest",
+    "stop": "office-addin-debugging stop .dev/manifest.xml",
+    "certs": "npx office-addin-dev-certs install",
+    "deploy": "npm run build && npx gh-pages -d dist"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^26.4.0",
+    "@types/office-js": "^1.0.608",
+    "copy-webpack-plugin": "^14.0.0",
+    "gh-pages": "^6.3.0",
+    "html-webpack-plugin": "^5.6.8",
+    "office-addin-debugging": "^7.0.0",
+    "office-addin-dev-certs": "^2.0.10",
+    "ts-loader": "^9.6.2",
+    "typescript": "^5.9.3",
+    "webpack": "^5.110.2",
+    "webpack-cli": "^7.2.3",
+    "webpack-dev-server": "^6.0.0"
+  }
+}

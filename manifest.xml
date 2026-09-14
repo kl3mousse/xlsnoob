@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp
+  xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+  xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
+  xsi:type="TaskPaneApp">
+
+  <Id>4af92278-7f2b-4a3c-bd96-4cacaf7f63d3</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>xlsNoob</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  <DisplayName DefaultValue="xlsNoob" />
+  <Description DefaultValue="Handy extras for Excel." />
+  <IconUrl DefaultValue="https://kl3mousse.github.io/xlsnoob/assets/icon-32.png" />
+  <HighResolutionIconUrl DefaultValue="https://kl3mousse.github.io/xlsnoob/assets/icon-64.png" />
+  <SupportUrl DefaultValue="https://kl3mousse.github.io/xlsnoob/" />
+
+  <AppDomains>
+    <AppDomain>https://kl3mousse.github.io</AppDomain>
+  </AppDomains>
+
+  <Hosts>
+    <Host Name="Workbook" />
+  </Hosts>
+
+  <Requirements>
+    <Sets>
+      <Set Name="ExcelApi" MinVersion="1.1" />
+    </Sets>
+  </Requirements>
+
+  <DefaultSettings>
+    <SourceLocation DefaultValue="https://kl3mousse.github.io/xlsnoob/taskpane.html" />
+  </DefaultSettings>
+
+  <Permissions>ReadWriteDocument</Permissions>
+
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <Hosts>
+      <Host xsi:type="Workbook">
+        <DesktopFormFactor>
+          <GetStarted>
+            <Title resid="GetStarted.Title" />
+            <Description resid="GetStarted.Description" />
+            <LearnMoreUrl resid="GetStarted.LearnMoreUrl" />
+          </GetStarted>
+
+          <FunctionFile resid="Commands.Url" />
+
+          <ExtensionPoint xsi:type="PrimaryCommandSurface">
+            <CustomTab id="xlsNoob.Tab">
+              <Group id="xlsNoob.FavoritesGroup">
+                <Label resid="FavoritesGroup.Label" />
+                <Icon>
+                  <bt:Image size="16" resid="FavoritesIcon.16x16" />
+                  <bt:Image size="32" resid="FavoritesIcon.32x32" />
+                  <bt:Image size="80" resid="FavoritesIcon.80x80" />
+                </Icon>
+
+                <Control xsi:type="Button" id="xlsNoob.FavoritesButton">
+                  <Label resid="Favorites.Label" />
+                  <Supertip>
+                    <Title resid="Favorites.Label" />
+                    <Description resid="Favorites.Tooltip" />
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="FavoritesIcon.16x16" />
+                    <bt:Image size="32" resid="FavoritesIcon.32x32" />
+                    <bt:Image size="80" resid="FavoritesIcon.80x80" />
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <TaskpaneId>FavoritesPane</TaskpaneId>
+                    <SourceLocation resid="FavoritesTaskpane.Url" />
+                  </Action>
+                </Control>
+              </Group>
+
+              <Group id="xlsNoob.ToolsGroup">
+                <Label resid="ToolsGroup.Label" />
+                <Icon>
+                  <bt:Image size="16" resid="FolderIcon.16x16" />
+                  <bt:Image size="32" resid="FolderIcon.32x32" />
+                  <bt:Image size="80" resid="FolderIcon.80x80" />
+                </Icon>
+
+                <Control xsi:type="Button" id="xlsNoob.OpenFolderButton">
+                  <Label resid="OpenFolder.Label" />
+                  <Supertip>
+                    <Title resid="OpenFolder.Label" />
+                    <Description resid="OpenFolder.Tooltip" />
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="FolderIcon.16x16" />
+                    <bt:Image size="32" resid="FolderIcon.32x32" />
+                    <bt:Image size="80" resid="FolderIcon.80x80" />
+                  </Icon>
+                  <Action xsi:type="ExecuteFunction">
+                    <FunctionName>openContainingFolder</FunctionName>
+                  </Action>
+                </Control>
+              </Group>
+
+              <Group id="xlsNoob.AboutGroup">
+                <Label resid="AboutGroup.Label" />
+                <Icon>
+                  <bt:Image size="16" resid="InfoIcon.16x16" />
+                  <bt:Image size="32" resid="InfoIcon.32x32" />
+                  <bt:Image size="80" resid="InfoIcon.80x80" />
+                </Icon>
+
+                <Control xsi:type="Button" id="xlsNoob.InfoButton">
+                  <Label resid="Info.Label" />
+                  <Supertip>
+                    <Title resid="Info.Label" />
+                    <Description resid="Info.Tooltip" />
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="InfoIcon.16x16" />
+                    <bt:Image size="32" resid="InfoIcon.32x32" />
+                    <bt:Image size="80" resid="InfoIcon.80x80" />
+                  </Icon>
+                  <Action xsi:type="ExecuteFunction">
+                    <FunctionName>openInfo</FunctionName>
+                  </Action>
+                </Control>
+              </Group>
+
+              <Label resid="Tab.Label" />
+            </CustomTab>
+          </ExtensionPoint>
+        </DesktopFormFactor>
+      </Host>
+    </Hosts>
+
+    <Resources>
+      <bt:Images>
+        <bt:Image id="FavoritesIcon.16x16" DefaultValue="https://kl3mousse.github.io/xlsnoob/assets/icon-16.png" />
+        <bt:Image id="FavoritesIcon.32x32" DefaultValue="https://kl3mousse.github.io/xlsnoob/assets/icon-32.png" />
+        <bt:Image id="FavoritesIcon.80x80" DefaultValue="https://kl3mousse.github.io/xlsnoob/assets/icon-80.png" />
+        <bt:Image id="FolderIcon.16x16" DefaultValue="https://kl3mousse.github.io/xlsnoob/assets/icon-16.png" />
+        <bt:Image id="FolderIcon.32x32" DefaultValue="https://kl3mousse.github.io/xlsnoob/assets/icon-32.png" />
+        <bt:Image id="FolderIcon.80x80" DefaultValue="https://kl3mousse.github.io/xlsnoob/assets/icon-80.png" />
+        <bt:Image id="InfoIcon.16x16" DefaultValue="https://kl3mousse.github.io/xlsnoob/assets/icon-16.png" />
+        <bt:Image id="InfoIcon.32x32" DefaultValue="https://kl3mousse.github.io/xlsnoob/assets/icon-32.png" />
+        <bt:Image id="InfoIcon.80x80" DefaultValue="https://kl3mousse.github.io/xlsnoob/assets/icon-80.png" />
+      </bt:Images>
+      <bt:Urls>
+        <bt:Url id="Commands.Url" DefaultValue="https://kl3mousse.github.io/xlsnoob/commands.html" />
+        <bt:Url id="Taskpane.Url" DefaultValue="https://kl3mousse.github.io/xlsnoob/taskpane.html" />
+        <bt:Url id="FavoritesTaskpane.Url" DefaultValue="https://kl3mousse.github.io/xlsnoob/taskpane.html" />
+        <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://github.com/kl3mousse/xlsnoob" />
+      </bt:Urls>
+      <bt:ShortStrings>
+        <bt:String id="GetStarted.Title" DefaultValue="Get started with xlsNoob" />
+        <bt:String id="Tab.Label" DefaultValue="xlsNoob" />
+        <bt:String id="FavoritesGroup.Label" DefaultValue="Favorites" />
+        <bt:String id="Favorites.Label" DefaultValue="Favorites" />
+        <bt:String id="ToolsGroup.Label" DefaultValue="Tools" />
+        <bt:String id="AboutGroup.Label" DefaultValue="About" />
+        <bt:String id="OpenFolder.Label" DefaultValue="🔍 Containing Folder" />
+        <bt:String id="Info.Label" DefaultValue="Info" />
+      </bt:ShortStrings>
+      <bt:LongStrings>
+        <bt:String id="GetStarted.Description" DefaultValue="Your xlsNoob add-in loaded successfully. Go to the xlsNoob tab to get started." />
+        <bt:String id="Favorites.Tooltip" DefaultValue="Opens workbook favorites in the task pane." />
+        <bt:String id="OpenFolder.Tooltip" DefaultValue="Opens the containing SharePoint or OneDrive folder in your browser." />
+        <bt:String id="Info.Tooltip" DefaultValue="Shows information, source, and license details for xlsNoob." />
+      </bt:LongStrings>
+    </Resources>
+  </VersionOverrides>
+</OfficeApp>

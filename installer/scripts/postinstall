@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -eu
+
+CONSOLE_USER="$(stat -f '%Su' /dev/console)"
+
+if [ -z "${CONSOLE_USER}" ] || [ "${CONSOLE_USER}" = "root" ]; then
+  echo "Could not determine the signed-in user." >&2
+  exit 1
+fi
+
+USER_HOME="$(dscl . -read "/Users/${CONSOLE_USER}" NFSHomeDirectory | awk '{print $2}')"
+SOURCE_MANIFEST="/Library/Application Support/xlsNoob/manifest.xml"
+TARGET_DIR="${USER_HOME}/Library/Containers/com.microsoft.Excel/Data/Documents/wef"
+
+mkdir -p "${TARGET_DIR}"
+cp "${SOURCE_MANIFEST}" "${TARGET_DIR}/xlsNoob.xml"
+chown -R "${CONSOLE_USER}:staff" "${TARGET_DIR}"
+chmod 644 "${TARGET_DIR}/xlsNoob.xml"
+
+exit 0
