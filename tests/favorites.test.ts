@@ -6,7 +6,7 @@ import { Favorite, getUngroupedGroupId } from "../src/favorites/favorite";
 import { deriveFavoriteLocation, deriveFavoriteName, filterFavorites, normalizeFavoriteUrl } from "../src/favorites/favorite-utils";
 import { FavoritesService } from "../src/favorites/favorites-service";
 import { LocalStorageFavoritesStore } from "../src/favorites/local-storage-favorites-store";
-import { getExcelOpenUrl } from "../src/office/files";
+import { getContainingFolderUrl, getExcelOpenUrl } from "../src/office/files";
 
 const v1StorageKey = "xlsnoob.favorites.v1";
 const v2StorageKey = "xlsnoob.favorites.v2";
@@ -141,6 +141,37 @@ test("service adds, deduplicates, edits, reorders, moves groups, and removes fav
   assert.deepEqual((await service.list()).filter(({ groupId }) => groupId === group.id).map(({ id }) => id), [second.id]);
 });
 
+test("deleting a custom group moves its favorites back to Ungrouped in order", async () => {
+  const storage = new MemoryStorage();
+  const service = new FavoritesService(
+    new LocalStorageFavoritesStore(storage),
+    (() => {
+      let id = 0;
+      return () => `favorite-${++id}`;
+    })(),
+    () => new Date("2026-02-03T04:05:06.000Z"),
+  );
+
+  const ungrouped = await service.add("https://example.com/docs/summary.xlsx");
+  const first = await service.add("https://example.com/docs/forecast.xlsx");
+  const second = await service.add("https://example.com/docs/headcount.xlsx");
+  const group = await service.addGroup("Finance");
+  await service.moveFavoriteToGroup(first.id, group.id);
+  await service.moveFavoriteToGroup(second.id, group.id);
+
+  await service.deleteGroup(group.id);
+
+  assert.deepEqual((await service.listGroups()).map(({ id }) => id), [getUngroupedGroupId()]);
+  assert.deepEqual(
+    (await service.list()).map(({ id, groupId }) => ({ id, groupId })),
+    [
+      { id: ungrouped.id, groupId: getUngroupedGroupId() },
+      { id: first.id, groupId: getUngroupedGroupId() },
+      { id: second.id, groupId: getUngroupedGroupId() },
+    ],
+  );
+});
+
 test("URL helpers normalize conservatively and derive decoded names", () => {
   assert.equal(
     normalizeFavoriteUrl(" HTTPS://Example.COM:443/docs/Quarterly%20Review.xlsx/#sheet=Summary "),
@@ -169,6 +200,13 @@ test("Excel open URL launches the desktop client in edit mode", () => {
     "ms-excel:ofe|u|https://example.sharepoint.com/sites/team/Shared%20Documents/workbook.xlsx",
   );
   assert.throws(() => getExcelOpenUrl("file:///Users/example/workbook.xlsx"), /HTTP or HTTPS/);
+});
+
+test("containing folder URL drops filename, query, and hash", () => {
+  assert.equal(
+    getContainingFolderUrl("https://example.sharepoint.com/sites/team/Shared%20Documents/workbook.xlsx?web=1#sheet=Summary"),
+    "https://example.sharepoint.com/sites/team/Shared%20Documents/",
+  );
 });
 
 test("filter searches name, comment, and URL without changing manual order", () => {

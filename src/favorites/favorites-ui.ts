@@ -13,6 +13,7 @@ let editingId: string | undefined;
 let pendingFavorite: Favorite | undefined;
 let removingId: string | undefined;
 let searchQuery = "";
+let fieldIdSequence = 0;
 
 function element<T extends HTMLElement>(id: string): T {
   return document.getElementById(id) as T;
@@ -139,7 +140,7 @@ function updateCurrentState(): void {
     ? favorites.find((favorite) => normalizeFavoriteUrl(favorite.url) === normalizeFavoriteUrl(currentWorkbookUrl))
     : undefined;
   const button = element<HTMLButtonElement>("addCurrentFavorite");
-  button.textContent = current ? "★" : "☆";
+  button.textContent = current ? "★ Saved" : "☆ Add";
   button.title = current ? "Current workbook saved in Favorites" : "Add current workbook to Favorites";
   button.setAttribute("aria-label", current ? "Current workbook saved in Favorites" : "Add current workbook to Favorites");
   button.classList.toggle("is-favorited", Boolean(current));
@@ -153,6 +154,11 @@ function createField(labelText: string, control: HTMLElement): HTMLLabelElement 
   const text = document.createElement("span");
   label.className = "favorite-field";
   text.textContent = labelText;
+  if (control instanceof HTMLInputElement || control instanceof HTMLSelectElement || control instanceof HTMLTextAreaElement) {
+    const fieldId = `favorite-field-${++fieldIdSequence}`;
+    control.id = fieldId;
+    label.htmlFor = fieldId;
+  }
   label.append(text, control);
   return label;
 }
@@ -254,6 +260,7 @@ async function promptMoveFavoriteToGroup(id: string): Promise<string | null> {
     ...groups
       .slice()
       .sort((left, right) => left.order - right.order)
+      .filter((group) => group.id !== getUngroupedGroupId())
       .map((group) => ({ label: group.name, value: group.id })),
   ];
   const target = await showDialogInput("Move to group", currentGroup, "", options);
@@ -413,19 +420,15 @@ function createGroupSection(group: FavoriteGroup, groupFavorites: Favorite[]): H
   const header = document.createElement("button");
   header.type = "button";
   header.className = "favorite-group-header";
-  header.style.setProperty("color", "#d35230", "important");
   header.setAttribute("aria-expanded", String(!group.collapsed));
   const chevron = document.createElement("span");
   chevron.className = "favorite-group-chevron";
-  chevron.style.setProperty("color", "#d35230", "important");
   chevron.textContent = group.collapsed ? "▸" : "▾";
   const label = document.createElement("span");
   label.className = "favorite-group-label";
-  label.style.setProperty("color", "#d35230", "important");
   label.textContent = group.name;
   const count = document.createElement("span");
   count.className = "favorite-group-count";
-  count.style.setProperty("color", "#d35230", "important");
   count.textContent = `· ${groupFavorites.length}`;
   header.append(chevron, label, count);
   header.addEventListener("click", () => {
@@ -443,7 +446,10 @@ function createGroupSection(group: FavoriteGroup, groupFavorites: Favorite[]): H
   const menuItems = document.createElement("div");
   menuItems.className = "action-menu-items";
   const addItem = (label: string, action: () => void): HTMLButtonElement => {
-    const button = createButton(label, action, "action-menu-item");
+    const button = createButton(label, () => {
+      menu.open = false;
+      action();
+    }, "action-menu-item");
     button.setAttribute("role", "menuitem");
     return button;
   };
@@ -457,14 +463,16 @@ function createGroupSection(group: FavoriteGroup, groupFavorites: Favorite[]): H
       await service.moveGroup(group.id, 1);
       await refreshFavorites();
     })),
-    addItem("Delete group", () => run(async () => {
+  );
+  if (group.id !== getUngroupedGroupId()) {
+    menuItems.append(addItem("Delete group", () => run(async () => {
       const confirmed = await showDialogConfirm("Delete group", `Move favorites from ${group.name} to Ungrouped and delete this group?`, "Delete");
       if (!confirmed) return;
       await service.deleteGroup(group.id);
       await refreshFavorites();
       showStatusToast("✓ Group deleted");
-    })),
-  );
+    })));
+  }
   menu.append(menuTrigger, menuItems);
   menu.addEventListener("toggle", () => {
     menuTrigger.setAttribute("aria-expanded", String(menu.open));
@@ -495,8 +503,9 @@ function createGroupSection(group: FavoriteGroup, groupFavorites: Favorite[]): H
 function renderFavorites(): void {
   const query = searchQuery.trim();
   const filteredFavorites = filterFavorites(favorites, query, groups);
+  const favoritesToGroup = query ? filteredFavorites : favorites;
   const itemsByGroup = new Map<string, Favorite[]>();
-  for (const favorite of filteredFavorites) {
+  for (const favorite of favoritesToGroup) {
     const key = favorite.groupId ?? getUngroupedGroupId();
     const groupItems = itemsByGroup.get(key) ?? [];
     groupItems.push(favorite);
@@ -512,7 +521,7 @@ function renderFavorites(): void {
       }
       return true;
     });
-  const sections = visibleGroups.map((group) => createGroupSection(group, itemsByGroup.get(group.id) ?? favorites.filter((favorite) => (favorite.groupId ?? getUngroupedGroupId()) === group.id)));
+  const sections = visibleGroups.map((group) => createGroupSection(group, itemsByGroup.get(group.id) ?? []));
   element("favoritesList").replaceChildren(...sections);
   const empty = element("emptyFavorites");
   empty.hidden = sections.length > 0 || Boolean(pendingFavorite);

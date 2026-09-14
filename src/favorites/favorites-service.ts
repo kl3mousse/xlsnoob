@@ -126,14 +126,16 @@ export class FavoritesService {
   }
 
   async deleteGroup(id: string): Promise<void> {
+    if (id === getUngroupedGroupId()) return;
     const data = await this.listData();
     const group = data.groups.find((item) => item.id === id);
     if (!group) return;
     data.groups = data.groups.filter((item) => item.id !== id);
+    let nextUngroupedOrder = this.nextFavoriteOrder(data, getUngroupedGroupId());
     data.favorites.forEach((favorite) => {
       if ((favorite.groupId ?? getUngroupedGroupId()) === id) {
         favorite.groupId = getUngroupedGroupId();
-        favorite.order = this.nextFavoriteOrder(data, getUngroupedGroupId());
+        favorite.order = nextUngroupedOrder++;
       }
     });
     data.groups.forEach((item, index) => {
@@ -194,7 +196,9 @@ export class FavoritesService {
     const data = await this.listData();
     const favorite = data.favorites.find((item) => item.id === id);
     if (!favorite) throw new Error("Favorite no longer exists.");
+    const currentGroupId = favorite.groupId ?? getUngroupedGroupId();
     const destination = data.groups.some((group) => group.id === groupId) ? groupId : getUngroupedGroupId();
+    if (destination === currentGroupId) return;
     favorite.groupId = destination;
     favorite.order = this.nextFavoriteOrder(data, destination);
     favorite.updatedAt = this.now().toISOString();

@@ -12,7 +12,10 @@ module.exports = async (_env, options) => {
     : undefined;
 
   return {
-    entry: { taskpane: "./src/taskpane/taskpane.ts" },
+    entry: {
+      taskpane: "./src/taskpane/taskpane.ts",
+      commands: "./src/commands/commands.ts",
+    },
     output: {
       path: path.resolve(__dirname, "dist"),
       filename: "[name].js",
@@ -28,6 +31,11 @@ module.exports = async (_env, options) => {
         template: "./src/taskpane/taskpane.html",
         chunks: ["taskpane"],
         themeCss,
+      }),
+      new HtmlWebpackPlugin({
+        filename: "commands.html",
+        template: "./src/commands/commands.html",
+        chunks: ["commands"],
       }),
       new HtmlWebpackPlugin({
         filename: "info.html",

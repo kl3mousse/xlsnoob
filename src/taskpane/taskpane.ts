@@ -1,6 +1,5 @@
 /// <reference types="office-js" />
 
-import { openContainingFolder, openInfo } from "../commands/file";
 import { initializeFavorites } from "../favorites/favorites-ui";
 
 type ThemeName = "light" | "dark";
@@ -104,19 +103,8 @@ function initializeTheme(): void {
   });
 }
 
-function disableAutomaticTaskPane(): void {
-  Office.context.document.settings.set("Office.AutoShowTaskpaneWithDocument", false);
-  Office.context.document.settings.saveAsync();
-}
-
 initializeTheme();
 
 Office.onReady(() => {
-  disableAutomaticTaskPane();
   initializeFavorites();
-});
-
-Object.assign(globalThis, {
-  openContainingFolder,
-  openInfo,
 });

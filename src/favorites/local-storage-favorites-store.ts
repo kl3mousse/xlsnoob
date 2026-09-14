@@ -38,6 +38,15 @@ function normalizeGroupList(groups: unknown[]): FavoriteGroup[] {
     .map((group, index) => ({ ...group, order: index }));
 }
 
+function normalizeFavoritesForGroups(favorites: unknown[], groups: FavoriteGroup[]): Favorite[] {
+  const ungroupedId = getUngroupedGroupId();
+  return normalizeFavoriteList(favorites).map((favorite) => ({
+    ...favorite,
+    groupId: favorite.groupId && groups.some((group) => group.id === favorite.groupId) ? favorite.groupId : ungroupedId,
+    order: typeof favorite.order === "number" ? favorite.order : 0,
+  }));
+}
+
 function createEmptyData(): FavoritesData {
   return {
     version: 2,
@@ -74,10 +83,11 @@ export class LocalStorageFavoritesStore implements FavoritesStore {
       try {
         const parsed: unknown = JSON.parse(value);
         if (isFavoritesData(parsed)) {
+          const groups = normalizeGroupList(parsed.groups);
           return {
             version: 2,
-            groups: normalizeGroupList(parsed.groups),
-            favorites: normalizeFavoriteList(parsed.favorites),
+            groups,
+            favorites: normalizeFavoritesForGroups(parsed.favorites, groups),
           };
         }
       } catch {
@@ -104,12 +114,7 @@ export class LocalStorageFavoritesStore implements FavoritesStore {
 
   async saveData(data: FavoritesData): Promise<void> {
     const groups = normalizeGroupList(data.groups.length ? data.groups : [createDefaultGroup()]);
-    const ungroupedId = getUngroupedGroupId();
-    const favorites = normalizeFavoriteList(data.favorites).map((favorite) => ({
-      ...favorite,
-      groupId: favorite.groupId && groups.some((group) => group.id === favorite.groupId) ? favorite.groupId : ungroupedId,
-      order: typeof favorite.order === "number" ? favorite.order : 0,
-    }));
+    const favorites = normalizeFavoritesForGroups(data.favorites, groups);
     const normalizedData: FavoritesData = {
       version: 2,
       groups,

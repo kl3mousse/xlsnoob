@@ -35,7 +35,7 @@ export function deriveFavoriteLocation(value: string): string {
   try {
     const url = new URL(value);
     const hostname = url.hostname.replace(/^www\./i, "");
-    if (hostname.toLowerCase().endsWith("-my.sharepoint.com") || /^\/personal\//i.test(url.pathname)) {
+    if (/^[a-z0-9-]+-my\.sharepoint\.com$/i.test(hostname) || /^\/personal\//i.test(url.pathname)) {
       return "Personal OneDrive";
     }
     const parts = url.pathname.split("/").filter(Boolean);

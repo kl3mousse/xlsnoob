@@ -61,3 +61,5 @@ git push origin v1.0.0
 ```
 
 GitHub Actions builds `xlsNoob-1.0.0-macOS.pkg` and publishes it on the repository's Releases page.
+
+Cut release tags from a commit that is already merged to `main`, so the packaged manifest and the GitHub Pages-hosted assets are produced from the same revision.
