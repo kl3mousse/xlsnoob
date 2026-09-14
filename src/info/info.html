@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About xlsNoob</title>
+    <style><%= htmlWebpackPlugin.options.themeCss %></style>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #1f1f1f;
+        --text: #f3f3f3;
+        --text-muted: #b8b8b8;
+        --border: #3d3d3d;
+        --accent-soft: #163322;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 28px;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Aptos, "Segoe UI", sans-serif;
+        line-height: 1.5;
+      }
+      main { max-width: 560px; margin: 0 auto; }
+      header {
+        display: grid;
+        grid-template-columns: 52px minmax(0, 1fr);
+        gap: 14px;
+        align-items: center;
+        padding-bottom: 22px;
+        border-bottom: 1px solid var(--border);
+      }
+      header img {
+        width: 52px;
+        height: 52px;
+        padding: 8px;
+        border-radius: 8px;
+        background: var(--accent-soft);
+      }
+      h1 { margin: 0; font-size: 1.65rem; letter-spacing: 0; }
+      .tagline { margin: 2px 0 0; color: var(--text-muted); }
+      .intro { margin: 22px 0; font-size: 1.02rem; }
+      dl {
+        display: grid;
+        grid-template-columns: 80px minmax(0, 1fr);
+        gap: 10px 16px;
+        margin: 0;
+        padding: 18px 0;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+      }
+      dt { color: var(--text-muted); font-weight: 600; }
+      dd { margin: 0; }
+      a { color: var(--accent); font-weight: 600; text-underline-offset: 3px; }
+      a:hover { color: var(--accent); }
+      @media (max-width: 420px) {
+        body { padding: 20px; }
+        dl { grid-template-columns: 1fr; gap: 2px; }
+        dd + dt { margin-top: 8px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <img src="assets/icon-80.png" alt="" />
+        <div>
+          <h1>xlsNoob</h1>
+          <p class="tagline">Handy extras for Excel on Mac.</p>
+        </div>
+      </header>
+
+      <p class="intro">
+        A tiny, practical add-in that keeps workbook favorites close at hand and adds a couple of quick Mac-friendly helpers for Excel.
+      </p>
+
+      <dl>
+        <dt>Source</dt>
+        <dd><a href="https://github.com/kl3mousse/xlsnoob" target="_blank" rel="noopener noreferrer">github.com/kl3mousse/xlsnoob</a></dd>
+        <dt>License</dt>
+        <dd>ISC License</dd>
+      </dl>
+    </main>
+  </body>
+</html>

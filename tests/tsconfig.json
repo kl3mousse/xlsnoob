@@ -1,0 +1,18 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../.test-dist",
+    "rootDir": "..",
+    "sourceMap": false,
+    "types": ["node", "office-js"]
+  },
+  "include": [
+    "../src/favorites/favorite.ts",
+    "../src/favorites/favorite-utils.ts",
+    "../src/favorites/favorites-store.ts",
+    "../src/favorites/favorites-service.ts",
+    "../src/favorites/local-storage-favorites-store.ts",
+    "../src/office/files.ts",
+    "**/*.ts"
+  ]
+}
